@@ -1,0 +1,35 @@
+# Default configuration for every Raspi
+# It currently does:
+# - set locale
+# - sets hostname correctly
+# - runs apt update & upgrade
+# Usage: ansible-playbook -i <INVENTORY_FILE> ./playbooks/default.yml
+
+---
+- hosts: raspis               # Apply the changes to all raspis
+  become: true                # Tell Ansible to `become` root (execute commands as super user)
+  vars:
+    locale: "de_DE.UTF-8"
+    timezone: Europe/Berlin
+  
+  roles:
+    # Install and setup node exporter
+    - cloudalchemy.node_exporter
+
+  # Actual tasks
+  tasks:
+    - name: Set timezone to {{ timezone }}
+      include_tasks: "../tasks/timezone.yml"
+
+    - name: "Set language and keyboard layout"
+      include_tasks: "../tasks/i18n.yml"
+
+    - name: "Set hostname to {{ hostname }}"
+      include_tasks: "../tasks/hostname.yml"
+
+    - name: Update apt repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Upgrade packages
+      apt: upgrade=dist force_apt_get=yes
+

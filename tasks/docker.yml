@@ -1,0 +1,44 @@
+---
+- name: Install Docker dependencies via apt
+  apt:
+    pkg:
+      - libffi-dev
+      - libssl-dev
+      - python3-dev
+      - python3-pip
+      - git
+    state: present
+    update_cache: yes
+
+- name: Check if Docker is installed
+  command: which docker
+  ignore_errors: yes
+  register: docker_exists
+
+- name: Fetch Docker script from get.docker.com
+  get_url:
+    url: https://get.docker.com/
+    dest: /tmp/get-docker.sh
+    mode: 0775
+  when: docker_exists.rc == 1
+
+- name: Install docker install script
+  command: /tmp/get-docker.sh
+  environment:
+    CHANNEL: stable
+  when: docker_exists.rc == 1
+
+- name: Install Docker Compose using Pip.
+  pip:
+    name: docker-compose
+    state: present
+    executable: pip3
+
+- name: Add default user to Docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
+
+- name: Reboot
+  reboot:

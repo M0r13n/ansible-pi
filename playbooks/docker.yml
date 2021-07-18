@@ -1,0 +1,11 @@
+# Installs Docker on any Ubuntu (Debian ?) system
+# Usage: ansible-playbook -i <INVENTORY_FILE> ./playbooks/docker.yml
+
+---
+- hosts: docker               # Apply the changes to all raspis
+  become: true                # Tell Ansible to `become` root (execute commands as super user)
+ 
+  # Actual tasks
+  tasks:
+    - name: Install Docker & docker-compose
+      include_tasks: "../tasks/docker.yml"
