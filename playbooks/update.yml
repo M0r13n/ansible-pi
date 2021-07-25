@@ -1,0 +1,19 @@
+---
+# Run updates on all Raspis
+
+
+- hosts: all                  # Apply the changes to all raspis
+  become: true                # Tell Ansible to `become` root (execute commands as super user)
+
+
+  pre_tasks:
+    - name: Update Apt Cache
+      apt: update_cache=true cache_valid_time=600
+
+
+  tasks:
+    - name: Update packages via apt
+      include_tasks: "../tasks/update_apt.yml"
+  
+    - name: Update packages via pip
+      include_tasks: "../tasks/update_pip.yml"

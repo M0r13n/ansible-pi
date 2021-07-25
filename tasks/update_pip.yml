@@ -1,0 +1,12 @@
+- name: Get all installed packages that should be updated
+  shell: python3 -m pip list --format=freeze | grep -v '^\-e' | cut -d = -f 1
+  register: packages
+
+- name: The following pip packages were found
+  debug: "msg={{ packages.stdout.split('\n') | join(',') }}"
+
+- name: Run pip upgrade
+  pip:
+    name: "{{ packages.stdout.split('\n') | join(',') }}"
+    extra_args: -U
+  when: packages.stdout != ""
