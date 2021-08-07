@@ -31,3 +31,4 @@ Path: `./playbooks/docker.yml`
 
 - Installs Docker
 - Installs Docker-Compose
+- run with `ansible-playbook  playbooks/docker.yml --become --limit docker`

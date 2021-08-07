@@ -9,4 +9,4 @@
   pip:
     name: "{{ packages.stdout.split('\n') | join(',') }}"
     extra_args: -U
-  when: packages.stdout != ""
+  when: packages.stdout != "" 
